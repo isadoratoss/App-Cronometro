@@ -1,36 +1,25 @@
-import 'dart:async';
-
 class Cronometro {
-  int _counter = 0;
-  bool _isRunning = false;
-  late Timer _timer;
-  final StreamController<int> _controller = StreamController<int>();
+  final int? id;
+  final int counter;
+  final bool isRunning;
+  final bool isFinished;
+  final bool isPaused;
 
-  Stream<int> get onUpdate => _controller.stream;
+  Cronometro({
+    this.id,
+    required this.counter,
+    required this.isRunning,
+    required this.isFinished,
+    required this.isPaused,
+  });
 
-  bool get isRunning => _isRunning;
-
-  void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      _counter++;
-      _controller.add(_counter);
-    });
-    _isRunning = true;
-  }
-
-  void stopTimer() {
-    _timer.cancel();
-    _isRunning = false;
-  }
-
-  void resetTimer() {
-    _timer.cancel();
-    _counter = 0;
-    _isRunning = false;
-    _controller.add(_counter);
-  }
-
-  void dispose() {
-    _controller.close();
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'counter': counter,
+      'is_running': isRunning ? 1 : 0,
+      'is_finished': isFinished ? 1 : 0,
+      'is_paused': isPaused ? 1 : 0,
+    };
   }
 }

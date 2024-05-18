@@ -10,18 +10,22 @@ class CronometroDAO {
   CronometroDAO._privateConstructor();
   static final CronometroDAO instance = CronometroDAO._privateConstructor();
 
-  late Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     if (_database == null) {
       _database = await _initDatabase();
     }
-    return _database;
+    return _database!;
   }
 
   Future<Database> _initDatabase() async {
     final path = await getDatabasesPath();
     final databasePath = join(path, _dbName);
+
+    // Descomente a linha abaixo para forçar a recriação do banco de dados
+    // await deleteDatabase(databasePath);
+
     return await openDatabase(
       databasePath,
       version: _dbVersion,
@@ -66,5 +70,10 @@ class CronometroDAO {
         isPaused: maps[i]['is_paused'] == 1,
       );
     });
+  }
+
+  Future<void> clearCronometros() async {
+    final db = await database;
+    await db.delete(_tableName);
   }
 }

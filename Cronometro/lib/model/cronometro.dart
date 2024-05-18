@@ -6,7 +6,7 @@ class Cronometro {
   final bool isPaused;
 
   Cronometro({
-    this.id,
+    required this.id,
     required this.counter,
     required this.isRunning,
     required this.isFinished,

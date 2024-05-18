@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 import '../dao/cronometro_dao.dart';
 import '../model/cronometro.dart';
+import '../state/cronometro_state.dart';
 import 'finished_cronometros_page.dart';
 
 class CronometroPage extends StatefulWidget {
@@ -10,7 +12,6 @@ class CronometroPage extends StatefulWidget {
 }
 
 class _CronometroPageState extends State<CronometroPage> {
-  int _counter = 0;
   Timer? _timer;
   bool _isRunning = false;
   late final CronometroDAO _cronometroDAO;
@@ -35,9 +36,7 @@ class _CronometroPageState extends State<CronometroPage> {
     });
 
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        _counter++;
-      });
+      Provider.of<CronometroState>(context, listen: false).increment();
     });
   }
 
@@ -52,16 +51,17 @@ class _CronometroPageState extends State<CronometroPage> {
   void _resetCronometro() {
     setState(() {
       _isRunning = false;
-      _counter = 0;
     });
     _timer?.cancel();
+    Provider.of<CronometroState>(context, listen: false).reset();
     _saveCronometro(isFinished: true);
   }
 
   Future<void> _saveCronometro({required bool isFinished}) async {
+    final cronometroState = Provider.of<CronometroState>(context, listen: false);
     final cronometro = Cronometro(
       id: null,
-      counter: _counter,
+      counter: cronometroState.counter,
       isRunning: _isRunning,
       isFinished: isFinished,
       isPaused: !_isRunning && !isFinished,
@@ -88,6 +88,8 @@ class _CronometroPageState extends State<CronometroPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cronometroState = Provider.of<CronometroState>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Cronômetro'),
@@ -97,7 +99,7 @@ class _CronometroPageState extends State<CronometroPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              '$_counter',
+              '${cronometroState.counter}',
               style: Theme.of(context).textTheme.headline4,
             ),
             SizedBox(height: 20),

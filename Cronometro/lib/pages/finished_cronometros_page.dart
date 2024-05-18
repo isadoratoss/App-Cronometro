@@ -2,56 +2,37 @@ import 'package:flutter/material.dart';
 import '../dao/cronometro_dao.dart';
 import '../model/cronometro.dart';
 
-class FinishedCronometrosPage extends StatefulWidget {
-  const FinishedCronometrosPage({Key? key}) : super(key: key);
-
-  @override
-  _FinishedCronometrosPageState createState() => _FinishedCronometrosPageState();
-}
-
-class _FinishedCronometrosPageState extends State<FinishedCronometrosPage> {
-  late final CronometroDAO _cronometroDAO;
-  List<Cronometro> _cronometros = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _cronometroDAO = CronometroDAO.instance;
-    _loadFinishedCronometros();
-  }
-
-  void _loadFinishedCronometros() async {
-    final cronometros = await _cronometroDAO.getFinishedCronometros();
-    setState(() {
-      _cronometros = cronometros;
-    });
-  }
-
+class FinishedCronometrosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cronômetros Finalizados'),
       ),
-      body: _buildCronometroList(),
-    );
-  }
-
-  Widget _buildCronometroList() {
-    if (_cronometros.isEmpty) {
-      return Center(
-        child: Text('Nenhum cronômetro finalizado'),
-      );
-    }
-
-    return ListView.builder(
-      itemCount: _cronometros.length,
-      itemBuilder: (context, index) {
-        final cronometro = _cronometros[index];
-        return ListTile(
-          title: Text('Cronômetro ${index + 1} - ${cronometro.counter} segundos'),
-        );
-      },
+      body: FutureBuilder<List<Cronometro>>(
+        future: CronometroDAO.instance.getFinishedCronometros(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erro: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Nenhum cronômetro finalizado.'));
+          } else {
+            final cronometros = snapshot.data!;
+            return ListView.builder(
+              itemCount: cronometros.length,
+              itemBuilder: (context, index) {
+                final cronometro = cronometros[index];
+                return ListTile(
+                  title: Text('Cronômetro'),
+                  subtitle: Text('Contador: ${cronometro.counter}'),
+                );
+              },
+            );
+          }
+        },
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../dao/cronometro_dao.dart';
 import '../model/cronometro.dart';
 import 'cronometro_page.dart';
+import 'maps_page.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -66,6 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: _clearCronometros,
             tooltip: 'Limpar Histórico',
             child: Icon(Icons.delete),
+          ),
+          SizedBox(height: 10),  // Espaçamento entre os botões
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),  // Navegando para a página de mapas
+              );
+            },
+            tooltip: 'Abrir Mapa',
+            child: Icon(Icons.map),
           ),
         ],
       ),

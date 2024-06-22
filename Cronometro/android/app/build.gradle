@@ -1,3 +1,5 @@
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 plugins {
     id "com.android.application"
     id "kotlin-android"
@@ -23,7 +25,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "edu.br.moodle.materdei.cronometro"
+    namespace "com.example.maps"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -41,11 +43,8 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "edu.br.moodle.materdei.cronometro"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        applicationId "com.example.maps"
+        minSdkVersion 20 // Atualize isto para 20
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -60,8 +59,12 @@ android {
     }
 }
 
+
 flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // outras dependências
+}
